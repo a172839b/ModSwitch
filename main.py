@@ -20,7 +20,7 @@ class Window:
     def __init__(self, loop):
         self.loop = loop
         # 視窗初始化設定
-        self.root = tk.Tk(className=f"模組包切換器v1,0")
+        self.root = tk.Tk(className=f"模組包切換器v1,1")
         self.root.protocol("WM_DELETE_WINDOW", self.cancel_callback)
         # 設定視窗寬高
         window_width = 700

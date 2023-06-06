@@ -99,7 +99,6 @@ class ModPackageManagerFrame(MyFrame):
 
         self.war3exe = EntryFrame(self, 'war3_exe_path', '魔獸執行檔:', btnName='執行', filemode=True)
         self.war3exe.grid(row=1, column=0, columnspan=3, sticky=NSEW)
-        # self.entry.select_callback = self.select_callback
 
         # OptionMenu
         self.item_list = ["停用模組包"]
@@ -108,9 +107,10 @@ class ModPackageManagerFrame(MyFrame):
         self.combobox.grid(row=2, column=0, padx=2, pady=5, sticky="nsew")
         self.combobox.bind('<<ComboboxSelected>>', self.on_combobox_selected)
         self.combobox.bind('<Button-1>', self.combo_events)
-
+        ttk.Button(self, text="重啟", command=lambda: self.loop.create_task(self.restart_war3())). \
+            grid(row=2, column=1, padx=2, pady=5, sticky=NSEW)
         ttk.Button(self, text='打開', command=lambda: startfile(self.modPath)) \
-            .grid(row=2, column=1, padx=2, pady=5, sticky=NSEW)
+            .grid(row=2, column=2, padx=2, pady=5, sticky=NSEW)
 
         self.restart = BooleanVar(value=read('modpack_restart', False))
         ttk.Checkbutton(self, text='自動重啟', variable=self.restart). \
@@ -124,6 +124,16 @@ class ModPackageManagerFrame(MyFrame):
 
         ttk.Label(self, text='使用說明: 在目錄底下會有\"__MODPACK__\"資料夾，進入資料夾中，新增資料夾並將模組放入。') \
             .grid(row=4, column=0, padx=20, pady=20, sticky=NSEW)
+        self.is_restart_war3 = False
+
+    async def restart_war3(self):
+        if self.is_restart_war3:
+            return
+        self.is_restart_war3 = True
+        await killWar3()
+        if Path(self.war3exe.path).is_file():
+            startfile(self.war3exe.path)
+        self.is_restart_war3 = False
 
     def combo_events(self, evt):
         w = evt.widget
